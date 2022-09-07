@@ -89,6 +89,18 @@
 				<spring.profiles.active>mysqlprod</spring.profiles.active>
 			</properties>
 		</profile>
+		<profile>
+			<id>cli1</id>
+			<properties>
+				<spring.profiles.active>cli1</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>cli2</id>
+			<properties>
+				<spring.profiles.active>cli2</spring.profiles.active>
+			</properties>
+		</profile>
 		<!-- Perfiles de empaquetado -->
 		<profile>
 			<id>war-build</id>
@@ -120,13 +132,13 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>jar-build</id>
 			<properties>
 				<packaging.type>jar</packaging.type>
 				<tomcat.scope>
-	compile</tomcat.scope>
+					compile</tomcat.scope>
 			</properties>
 			<activation>
 				<property>
@@ -144,11 +156,11 @@
 				</plugins>
 			</build>
 		</profile>
-		
-		
+
+
 	</profiles>
 
-	
+
 
 
 	<build>
