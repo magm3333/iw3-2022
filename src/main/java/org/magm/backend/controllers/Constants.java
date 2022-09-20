@@ -9,5 +9,10 @@ public final class Constants {
 	public static final String URL_INTEGRATION = URL_BASE + "/integration";
 	public static final String URL_INTEGRATION_CLI1 = URL_INTEGRATION + "/cli1";
 	public static final String URL_INTEGRATION_CLI2 = URL_INTEGRATION + "/cli2";
+	
+	public static final String URL_LOGIN = URL_BASE + "/login";
+	
+	public static final String URL_AUTHORIZATION = URL_BASE + "/authorization";
+	
 
 }
