@@ -3,10 +3,14 @@ package org.magm.backend.controllers;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.magm.backend.auth.User;
+import org.magm.backend.auth.UserEvent;
 import org.magm.backend.auth.custom.CustomAuthenticationManager;
 import org.magm.backend.auth.filters.AuthConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +30,13 @@ public class AuthRestController extends BaseRestController {
 
 	@Autowired
 	private AuthenticationManager authManager;
+	
+	@Autowired
+	private ApplicationEventPublisher appEventPublisher;
 
 	@PostMapping(value = Constants.URL_LOGIN, produces = MediaType.TEXT_PLAIN_VALUE)
 	public ResponseEntity<?> loginExternalOnlyToken(@RequestParam(value = "username") String username,
-			@RequestParam(value = "password") String password) {
+			@RequestParam(value = "password") String password, HttpServletRequest request) {
 		Authentication auth = null;
 		try {
 			auth = authManager.authenticate(((CustomAuthenticationManager) authManager).AuthWrap(username, password));
@@ -48,6 +55,7 @@ public class AuthRestController extends BaseRestController {
 				.withExpiresAt(new Date(System.currentTimeMillis() + AuthConstants.EXPIRATION_TIME))
 				.sign(Algorithm.HMAC512(AuthConstants.SECRET.getBytes()));
 
+		appEventPublisher.publishEvent(new UserEvent(user, request, UserEvent.TypeEvent.LOGIN));
 		return new ResponseEntity<String>(token, HttpStatus.OK);
 	}
 }

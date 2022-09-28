@@ -1,6 +1,6 @@
 package org.magm.backend;
 
-import org.magm.backend.model.persistence.ProductRepository;
+import org.magm.backend.util.EmailBusiness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -24,9 +24,15 @@ public class AppApplication extends SpringBootServletInitializer implements Comm
 	//@Autowired
 	//private ProductRepository productDAO;
 	
+	//@Autowired
+	//private EmailBusiness emailBusiness;
+
+	
 	@Override
 	public void run(String... args) throws Exception {
 		log.info("Perfil Activo: {}", profile);
+
+		//emailBusiness.sendSimpleMessage("magm@iua.edu.ar", "Mail de prueba", "Prueba de mail, perfil activo="+profile);
 		
 		//log.info("Cantidad de productos de la categoría id=1: {}",productDAO.countProductsByCategory(1));
 		
