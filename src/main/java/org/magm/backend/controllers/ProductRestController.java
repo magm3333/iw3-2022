@@ -8,11 +8,13 @@ import org.magm.backend.model.business.ICategoryBusiness;
 import org.magm.backend.model.business.IProductBusiness;
 import org.magm.backend.model.business.NotFoundException;
 import org.magm.backend.util.IStandartResponseBusiness;
+import org.magm.backend.util.StandartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +24,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
+@Tag(description = "API Servicios relacionados con Productos", name = "Product")
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(Constants.URL_PRODUCTS)
 public class ProductRestController extends BaseRestController {
 	
@@ -116,6 +130,8 @@ public class ProductRestController extends BaseRestController {
 		@Autowired
 		private ICategoryBusiness categoryBusiness;
 
+		
+		@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_INTEGRATION')")
 		@GetMapping(value = "/categories", produces = MediaType.APPLICATION_JSON_VALUE)
 		public ResponseEntity<?> listCategories() {
 			try {
@@ -125,6 +141,19 @@ public class ProductRestController extends BaseRestController {
 						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
+
+
+		@Operation(operationId = "load-category", summary = "Este servicio permite cargar una categoría por su id.")
+		@Parameter(in = ParameterIn.PATH, name = "id", schema = @Schema(type = "integer"), required = true, description = "Identificador de la categoría.")
+		@ApiResponses(value = { 
+				@ApiResponse(responseCode = "200", description = "Devuelve una Categoría.", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = Category.class)) }),
+				@ApiResponse(responseCode = "500", description = "Error interno", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class)) }), 
+				@ApiResponse(responseCode = "404", description = "No se encuentra la categoría para el identificador informado", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class)) }) 
+				
+		})
 
 		@GetMapping(value = "/categories/{id}")
 		public ResponseEntity<?> loadCategory(@PathVariable("id") long id) {
